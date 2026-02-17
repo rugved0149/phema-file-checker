@@ -22,7 +22,7 @@ app.add_middleware(
 )
 
 BASE_DIR = Path(__file__).resolve().parent
-FRONTEND_FILE = BASE_DIR.parent / "frontend" / "index.html"
+FRONTEND_FILE = BASE_DIR / "index.html"
 
 MAX_FILE_SIZE = 10 * 1024 * 1024
 ALLOWED_EXTENSIONS = {
@@ -33,7 +33,6 @@ ALLOWED_EXTENSIONS = {
 @app.get("/", response_class=HTMLResponse)
 def serve_frontend():
     return FRONTEND_FILE.read_text(encoding="utf-8")
-
 
 @app.post("/scan")
 async def scan(file: UploadFile = File(...)):
