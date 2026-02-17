@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PHEMA File Checker</title>
+    <style>
+        body { font-family: Arial; margin: 40px; }
+        .event { border-left: 5px solid gray; padding: 10px; margin-top: 10px; }
+        .high { border-left-color: red; }
+        .medium { border-left-color: orange; }
+        .low { border-left-color: green; }
+    </style>
+</head>
+<body>
+
+<h2>PHEMA File Checker</h2>
+
+<p><strong>Allowed:</strong> .txt .ps1 .js .vbs .exe .bin .zip</p>
+<p><strong>Max Size:</strong> 10MB</p>
+
+<input type="file" id="fileInput">
+<button id="scanBtn">Scan</button>
+
+<p id="status"></p>
+<div id="results"></div>
+
+<script>
+const API_URL = "http://127.0.0.1:8000/scan";
+
+document.getElementById("scanBtn").addEventListener("click", async () => {
+
+    const fileInput = document.getElementById("fileInput");
+    const status = document.getElementById("status");
+    const results = document.getElementById("results");
+
+    if (!fileInput.files.length) {
+        alert("Select a file");
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", fileInput.files[0]);
+
+    status.innerText = "Scanning...";
+    results.innerHTML = "";
+
+    try {
+        const response = await fetch(API_URL, {
+            method: "POST",
+            body: formData
+        });
+
+        const data = await response.json();
+
+        if (data.error) {
+            status.innerText = "Error";
+            results.innerHTML = `<p style="color:red">${data.error}</p>`;
+            return;
+        }
+
+        status.innerText = "Scan Complete";
+
+        results.innerHTML += `
+            <p><strong>File:</strong> ${data.filename}</p>
+            <p><strong>Size:</strong> ${data.size_kb} KB</p>
+            <p><strong>Scan Time:</strong> ${data.scan_duration_sec} sec</p>
+        `;
+
+        if (!data.events.length) {
+            results.innerHTML += "<p>No detection events emitted.</p>";
+            return;
+        }
+
+        data.events.forEach(event => {
+            const div = document.createElement("div");
+            div.className = `event ${event.severity}`;
+            div.innerHTML = `
+                <strong>${event.signal}</strong><br>
+                Severity: ${event.severity}<br>
+                Confidence: ${event.confidence}
+            `;
+            results.appendChild(div);
+        });
+
+    } catch (err) {
+        status.innerText = "Unexpected error";
+        console.error(err);
+    }
+});
+</script>
+
+</body>
+</html>
