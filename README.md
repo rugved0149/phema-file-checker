@@ -1,69 +1,80 @@
-PHEMA – Standalone Malicious File Checker
-Overview
+# 🛡️ PHEMA – Standalone Malicious File Checker
 
-The PHEMA File Checker is a standalone static file analysis module designed as part of the broader Phishing & Hybrid Event Monitoring Architecture (PHEMA) system.
+---
 
-This project focuses on primary static detection and emits structured security events suitable for ingestion by a centralized correlation engine.
+## 🔎 Overview
 
-It is intentionally modular, correlation-friendly, and does not perform final verdict classification.
+The **PHEMA File Checker** is a standalone static file analysis module built as part of the broader **Phishing & Hybrid Event Monitoring Architecture (PHEMA)**.
 
-Project Intent
+It performs **primary static detection** and emits structured security events designed for ingestion by a centralized correlation engine.
 
-The objective of this module is to:
+This module is intentionally:
 
-Perform static file inspection
+* 🧩 Modular
+* 🔗 Correlation-friendly
+* ⚖️ Verdict-neutral
 
-Extract technical security indicators
+It does **not** classify files as malicious or safe.
 
-Emit structured detection signals
+---
 
-Maintain strict modular independence
+## 🎯 Project Intent
 
-Avoid correlation, blocking, or behavioral analysis
+This module was designed to:
 
-This design aligns with modern SIEM/SOC architectures where detection modules emit granular events that are later correlated centrally.
+* 📂 Perform static file inspection
+* 🧠 Extract technical security indicators
+* 📡 Emit structured detection signals
+* 🏗️ Maintain strict modular independence
+* 🚫 Avoid correlation, blocking, or behavioral logic
 
-Core Capabilities
+The architecture mirrors modern **SIEM/SOC detection pipelines**, where modules emit granular evidence that is later correlated centrally.
 
-SHA256 file hashing
+---
 
-YARA-based signature matching
+## 🚀 Core Capabilities
 
-Suspicious string pattern detection
+* 🔐 SHA256 file hashing
+* 🧬 YARA-based signature matching
+* 🧾 Suspicious string pattern detection
+* 📊 File entropy analysis (packed/obfuscated indicators)
+* 📦 Event-based structured output
+* ⚡ FastAPI backend
+* 🌐 Web-based upload interface
+* ☁️ Deployment-ready (Render-compatible)
 
-File entropy analysis (packed/obfuscated indicators)
+---
 
-Event-based output format
+## 🧪 Detection Model
 
-FastAPI backend
+This module operates under **Primary Static Analysis Only**.
 
-Web-based upload interface
+### ✔ What It Does
 
-Deployment-ready architecture (Render-compatible)
+* Reads file bytes
+* Matches against YARA rules
+* Identifies suspicious indicators
+* Calculates entropy
+* Emits independent detection events
 
-Detection Model
+### ✘ What It Does NOT Do
 
-This module operates under Primary Static Analysis Only:
+* Execute files
+* Perform sandboxing
+* Conduct behavioral analysis
+* Compute final risk scores
+* Label files as “malicious” or “safe”
+* Correlate with other modules
 
-✔ Reads file bytes
-✔ Matches against YARA rules
-✔ Identifies suspicious indicators
-✔ Calculates entropy
-✔ Emits independent detection events
+This ensures the system remains **detection-focused and correlation-neutral**.
 
-It does NOT:
+---
 
-✘ Execute files
-✘ Perform sandboxing
-✘ Perform behavioral analysis
-✘ Compute final risk score
-✘ Label files as “malicious” or “safe”
-✘ Correlate with other modules
+## 📡 Event Output Contract
 
-Event Output Contract
+Each detected indicator generates a structured event:
 
-Each detected indicator generates one independent structured event:
-
+```json
 {
   "entity_id": "<file_hash>",
   "entity_type": "file",
@@ -73,10 +84,15 @@ Each detected indicator generates one independent structured event:
   "severity": "low | medium | high",
   "metadata": { ... }
 }
+```
 
-This ensures compatibility with centralized correlation services.
+This standardized format ensures seamless integration with centralized correlation services.
 
-Architecture
+---
+
+## 🏗️ Architecture
+
+```
 Frontend (Upload UI)
         ↓
 FastAPI Backend
@@ -88,94 +104,101 @@ Indicator Extraction
 Event Adapter
         ↓
 Structured Detection Events
+```
 
-The module is intentionally designed to remain detection-focused and correlation-neutral.
+The module intentionally avoids risk aggregation to preserve forensic clarity.
 
-Supported File Types
+---
 
-.txt
+## 📁 Supported File Types
 
-.ps1
+* .txt
+* .ps1
+* .js
+* .vbs
+* .exe
+* .bin
+* .zip
 
-.js
+📏 Maximum file size: **10MB**
 
-.vbs
+---
 
-.exe
+## ⚡ Performance
 
-.bin
+* Average scan time (small files): **~0.05 – 0.2 seconds**
+* Dependent on file size and YARA rule count
 
-.zip
+---
 
-Maximum file size: 10MB
-
-Performance
-
-Average scan time (small files): ~0.05 – 0.2 seconds
-
-Depends on file size and number of YARA rules
-
-Limitations
+## ⚠️ Limitations
 
 This project is intentionally constrained to:
 
-Static analysis only
+* Static analysis only
+* Signature-based detection
+* Heuristic string matching
+* Entropy-based suspicion
 
-Signature-based detection
+It does **not** detect:
 
-Heuristic string matching
+* Polymorphic malware without signatures
+* Advanced obfuscation beyond entropy detection
+* Zero-day exploits
+* Memory-only malware
+* Runtime behavioral anomalies
 
-Entropy-based suspicion
+It should be considered a **detection signal generator**, not a complete antivirus solution.
 
-It does not detect:
+---
 
-Polymorphic malware without signature
+## 🧠 Security Philosophy
 
-Advanced obfuscation beyond entropy detection
+> Detection modules should emit evidence, not verdicts.
 
-Zero-day exploits
+By separating detection from correlation:
 
-Memory-only malware
+* Evidence remains unbiased
+* Risk aggregation becomes centralized
+* Multi-signal intelligence becomes possible
 
-Runtime behavior anomalies
+This approach aligns with modern defensive security architecture.
 
-It should be considered a detection signal generator, not a complete antivirus solution.
+---
 
-Security Philosophy
+## 🚀 Deployment
 
-The design follows the principle:
+Designed for:
 
-Detection modules should emit evidence, not verdicts.
-
-This prevents premature classification and enables centralized risk computation across multiple signals.
-
-Deployment
-
-Designed to be deployed as:
-
-Backend → Render (persistent Python service)
-
-Frontend → Same service or static hosting
+* Backend → Render (persistent Python service)
+* Frontend → Same service or static hosting
 
 Start command:
 
+```
 uvicorn api.main:app --host 0.0.0.0 --port $PORT
-Future Enhancements
+```
 
-Expanded YARA rule sets
+---
 
-Integration with phishing detection module
+## 🔮 Future Enhancements
 
-Session-based entity tracking
+* Expanded YARA rule sets
+* Integration with phishing detection module
+* Session-based entity tracking
+* Cross-module correlation engine
+* Dashboard visualization
+* Automated hash intelligence lookup
 
-Cross-module correlation engine
+---
 
-Dashboard visualization
+## 👨‍💻 Author
 
-Automated hash intelligence lookup
-
-Author
-
-Rugved Suryawanshi
+**Rugved Suryawanshi**
 Computer Science Engineering
-Cybersecurity Systems & Detection Architecture Focus
+Cybersecurity Systems & Detection Architecture
+
+---
+## License
+
+This project is licensed under the MIT License – see the LICENSE file for details.
