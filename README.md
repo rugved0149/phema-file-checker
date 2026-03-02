@@ -196,9 +196,9 @@ uvicorn api.main:app --host 0.0.0.0 --port $PORT
 
 **Rugved Suryawanshi**
 Computer Science Engineering
-Cybersecurity Systems & Detection Architecture
 
 ---
 ## License
-
-This project is licensed under the MIT License – see the LICENSE file for details.
+© 2025 Rugved Suryawanshi.  
+This project is licensed under the MIT License.  
+Attribution is required in all copies or substantial portions of the Software.
